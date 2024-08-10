@@ -13,6 +13,7 @@ contract UserRegistry {
         string email;
         string passwordHash; // Store hashed password for security
         bool verified;
+        address walletAddress; // Wallet address associated with the user
     }
 
     struct EntityDetails {
@@ -25,6 +26,7 @@ contract UserRegistry {
         string email;
         string passwordHash; // Store hashed password for security
         bool verified;
+        address walletAddress; // Wallet address associated with the entity
     }
 
     struct User {
@@ -47,7 +49,8 @@ contract UserRegistry {
         string memory _addressDetails,
         string memory _phoneNumber,
         string memory _email,
-        string memory _passwordHash
+        string memory _passwordHash,
+        address _walletAddress
     ) public {
         require(!users[emailToAddress[_email]].registered, "Email already registered");
         require(!users[msg.sender].registered, "User already registered");
@@ -60,7 +63,8 @@ contract UserRegistry {
             phoneNumber: _phoneNumber,
             email: _email,
             passwordHash: _passwordHash,
-            verified: false
+            verified: false,
+            walletAddress: _walletAddress
         });
 
         users[msg.sender] = User({
@@ -83,7 +87,8 @@ contract UserRegistry {
         string memory _placePicsHash,
         string memory _certificationDocHash,
         string memory _email,
-        string memory _passwordHash
+        string memory _passwordHash,
+        address _walletAddress
     ) public {
         require(!users[emailToAddress[_email]].registered, "Email already registered");
         require(!users[msg.sender].registered, "User already registered");
@@ -97,7 +102,8 @@ contract UserRegistry {
             certificationDocHash: _certificationDocHash,
             email: _email,
             passwordHash: _passwordHash,
-            verified: false
+            verified: false,
+            walletAddress: _walletAddress
         });
 
         users[msg.sender] = User({
