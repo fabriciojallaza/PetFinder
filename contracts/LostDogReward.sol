@@ -1,148 +1,168 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Register {
-    address private owner;
+import "./Register.sol";
+import "./IHelpetToken.sol";
 
-    struct Person {
-        string name;
-        uint256 age;
-        string addressPhysical;
-        string phone;
-        string ci;
-        string photo;
-        string idCardPhoto;
-        bool isVerified;
+contract LostDogReward {
+    Register private register = Register(0xaE036c65C649172b43ef7156b009c6221B596B8b);
+    HelpetToken private helPetToken = HelpetToken(0xcD6a42782d230D7c13A74ddec5dD140e55499Df9);
+
+    address payable constant DONATION_FEE_ADDRESS = payable(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+
+    struct Post {
+        string dogImage;
+        string dogName;
+        string sightingLocation;
+        uint256 rewardAmount; // Amount in wei
+        address payable poster;
+        bool isClosed;
+        bool isVerified; // To track if the dog has been verified
+        uint256 findReportId; // ID for the find report
     }
 
-    struct Entity {
-        string name;
-        string addressPhysical;
-        string responsiblePerson;
-        string phone;
-        string ciResponsible;
-        string photo;
-        string idCardPhoto;
-        string placePhoto;
-        address walletAddress;
-        bool isVerified;
+    struct FindReport {
+        address finder;
+        uint256 postId;
+        bool isVerified; // To track if the find report has been verified
     }
 
-    mapping(address => Person) private persons;
-    mapping(address => Entity) private entities;
-    mapping(address => bool) private permissionedUsers;
+    uint256 private nextPostId = 0;
+    uint256 private nextFindReportId = 0;
 
-    event PersonRegistered(address indexed walletAddress, string name);
-    event EntityRegistered(address indexed walletAddress, string name);
-    event PersonVerified(address indexed walletAddress);
-    event EntityVerified(address indexed walletAddress);
-    event PermissionGranted(address indexed grantedTo);
+    mapping(uint256 => Post) private posts;
+    mapping(uint256 => FindReport) private findReports;
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Not the contract owner");
+    event PostCreated(uint256 indexed postId, address indexed poster, uint256 rewardAmount);
+    event DogFound(uint256 indexed findReportId, uint256 indexed postId, address indexed finder);
+    event RewardDistributed(uint256 indexed findReportId, uint256 indexed postId, address indexed finder, uint256 rewardAmount, uint256 feeAmount);
+    event PostClosed(uint256 indexed postId);
+
+    modifier onlyVerified() {
+        (bool isRegistered, bool isVerified) = register.isPersonRegistered(msg.sender);
+        require(isRegistered && isVerified, "Not verified");
         _;
     }
 
-    modifier onlyPermissioned() {
-        require(permissionedUsers[msg.sender] || msg.sender == owner, "Not authorized");
-        _;
+    function createPost(
+        string memory _dogImage,
+        string memory _dogName,
+        string memory _sightingLocation
+    ) public onlyVerified payable {
+        require(msg.value > 0, "Reward amount must be greater than 0");
+
+        uint256 postId = nextPostId++;
+
+        posts[postId] = Post({
+            dogImage: _dogImage,
+            dogName: _dogName,
+            sightingLocation: _sightingLocation,
+            rewardAmount: msg.value,
+            poster: payable(msg.sender),
+            isClosed: false,
+            isVerified: false,
+            findReportId: 0 // Initialize findReportId to 0
+        });
+
+        emit PostCreated(postId, msg.sender, msg.value);
     }
 
-    constructor() {
-        owner = msg.sender;
-    }
+    function findDog(uint256 _postId) public onlyVerified returns (uint256) {
+        Post storage post = posts[_postId];
+        require(!post.isClosed, "Post is closed");
+        require(!post.isVerified, "Post is already verified");
 
-    function registerPerson(
-        string memory _name,
-        uint256 _age,
-        string memory _addressPhysical,
-        string memory _phone,
-        string memory _ci,
-        string memory _photo,
-        string memory _idCardPhoto
-    ) public {
-        persons[msg.sender] = Person({
-            name: _name,
-            age: _age,
-            addressPhysical: _addressPhysical,
-            phone: _phone,
-            ci: _ci,
-            photo: _photo,
-            idCardPhoto: _idCardPhoto,
+        uint256 findReportId = nextFindReportId++;
+        findReports[findReportId] = FindReport({
+            finder: msg.sender,
+            postId: _postId,
             isVerified: false
         });
 
-        emit PersonRegistered(msg.sender, _name);
+        post.findReportId = findReportId;
+
+        emit DogFound(findReportId, _postId, msg.sender);
+        return findReportId;
     }
 
-    function registerEntity(
-        string memory _name,
-        string memory _addressPhysical,
-        string memory _responsiblePerson,
-        string memory _phone,
-        string memory _ciResponsible,
-        string memory _photo,
-        string memory _idCardPhoto,
-        string memory _placePhoto,
-        address _walletAddress
-    ) public {
-        entities[_walletAddress] = Entity({
-            name: _name,
-            addressPhysical: _addressPhysical,
-            responsiblePerson: _responsiblePerson,
-            phone: _phone,
-            ciResponsible: _ciResponsible,
-            photo: _photo,
-            idCardPhoto: _idCardPhoto,
-            placePhoto: _placePhoto,
-            walletAddress: _walletAddress,
-            isVerified: false
-        });
+    function verifyDog(uint256 _findReportId, bool _isVerified) public {
+        FindReport storage findReport = findReports[_findReportId];
+        Post storage post = posts[findReport.postId];
 
-        emit EntityRegistered(_walletAddress, _name);
+        require(post.poster == msg.sender, "Only the poster can verify the find");
+        require(!findReport.isVerified, "Find report is already verified");
+
+        if (_isVerified) {
+            uint256 donationFee = (post.rewardAmount * 3) / 100;
+            uint256 amountToFinder = post.rewardAmount - donationFee;
+
+            require(address(this).balance >= post.rewardAmount, "Insufficient balance in contract");
+
+            (bool sentToFinder, ) = findReport.finder.call{value: amountToFinder}("");
+            require(sentToFinder, "Failed to send Ether to finder");
+
+            (bool sentFee, ) = DONATION_FEE_ADDRESS.call{value: donationFee}("");
+            require(sentFee, "Failed to send Ether to donation fee address");
+
+            helPetToken.mint(findReport.finder, 1);
+
+            emit RewardDistributed(_findReportId, findReport.postId, findReport.finder, amountToFinder, donationFee);
+        } else {
+            // Keep the post open if not verified
+            post.isVerified = false;
+            findReport.isVerified = false;
+        }
+
+        emit PostClosed(findReport.postId); // Use post.postId here
     }
 
-    function isPersonRegistered(address _walletAddress) public view returns (bool, bool) {
-        Person memory person = persons[_walletAddress];
-        return (bytes(person.name).length > 0, person.isVerified);
+    function closePost(uint256 _postId) public {
+        Post storage post = posts[_postId];
+        require(post.poster == msg.sender, "Only the poster can close the post");
+        require(!post.isClosed, "Post is already closed");
+
+        if (address(this).balance >= post.rewardAmount) {
+            (bool sentToPoster, ) = post.poster.call{value: post.rewardAmount}("");
+            require(sentToPoster, "Failed to send Ether back to the poster");
+        }
+
+        post.isClosed = true;
+        emit PostClosed(_postId);
     }
 
-    function isEntityRegistered(address _walletAddress) public view returns (bool, bool) {
-        Entity memory entity = entities[_walletAddress];
-        return (bytes(entity.name).length > 0, entity.isVerified);
+    function getPost(uint256 _postId) public view returns (
+        string memory dogImage,
+        string memory dogName,
+        string memory sightingLocation,
+        uint256 rewardAmount,
+        address poster,
+        bool isClosed,
+        bool isVerified,
+        uint256 findReportId
+    ) {
+        Post storage post = posts[_postId];
+        return (
+            post.dogImage,
+            post.dogName,
+            post.sightingLocation,
+            post.rewardAmount,
+            post.poster,
+            post.isClosed,
+            post.isVerified,
+            post.findReportId
+        );
     }
 
-    function verifyPerson(address _walletAddress) public onlyPermissioned {
-        require(bytes(persons[_walletAddress].name).length > 0, "Person not registered");
-        persons[_walletAddress].isVerified = true;
-
-        emit PersonVerified(_walletAddress);
-    }
-
-    function verifyEntity(address _walletAddress) public onlyPermissioned {
-        require(bytes(entities[_walletAddress].name).length > 0, "Entity not registered");
-        entities[_walletAddress].isVerified = true;
-
-        emit EntityVerified(_walletAddress);
-    }
-
-    function revokePersonVerification(address _walletAddress) public onlyPermissioned {
-        require(bytes(persons[_walletAddress].name).length > 0, "Person not registered");
-        persons[_walletAddress].isVerified = false;
-    }
-
-    function revokeEntityVerification(address _walletAddress) public onlyPermissioned {
-        require(bytes(entities[_walletAddress].name).length > 0, "Entity not registered");
-        entities[_walletAddress].isVerified = false;
-    }
-
-    function grantPermission(address _user) public onlyOwner {
-        permissionedUsers[_user] = true;
-
-        emit PermissionGranted(_user);
-    }
-
-    function revokePermission(address _user) public onlyOwner {
-        permissionedUsers[_user] = false;
+    function getFindReport(uint256 _findReportId) public view returns (
+        address finder,
+        uint256 postId,
+        bool isVerified
+    ) {
+        FindReport storage findReport = findReports[_findReportId];
+        return (
+            findReport.finder,
+            findReport.postId,
+            findReport.isVerified
+        );
     }
 }
