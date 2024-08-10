@@ -125,4 +125,9 @@ contract UserRegistry {
         }
         emit UserVerified(_userAddress, _verified);
     }
+
+    function GetUserType() public view returns (UserType) {
+        require(users[msg.sender].registered, "User not registered");
+        return users[msg.sender].userType;
+    }
 }
