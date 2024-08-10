@@ -10,6 +10,8 @@ contract UserRegistry {
         string ci; // CI stands for an identification number
         string addressDetails;
         string phoneNumber;
+        string email;
+        string passwordHash; // Store hashed password for security
         bool verified;
     }
 
@@ -20,6 +22,8 @@ contract UserRegistry {
         string personInChargeCI;
         string placePicsHash; // Store IPFS hash or similar
         string certificationDocHash; // Store IPFS hash or similar
+        string email;
+        string passwordHash; // Store hashed password for security
         bool verified;
     }
 
@@ -27,11 +31,11 @@ contract UserRegistry {
         UserType userType;
         address userAddress;
         bool registered;
-        // This will hold either SingleUserDetails or EntityDetails based on userType
         bytes details;
     }
 
     mapping(address => User) public users;
+    mapping(string => address) private emailToAddress; // Maps email to user address
 
     event UserRegistered(address indexed userAddress, UserType userType);
     event UserVerified(address indexed userAddress, bool verified);
@@ -41,8 +45,11 @@ contract UserRegistry {
         string memory _fullName,
         string memory _ci,
         string memory _addressDetails,
-        string memory _phoneNumber
+        string memory _phoneNumber,
+        string memory _email,
+        string memory _passwordHash
     ) public {
+        require(!users[emailToAddress[_email]].registered, "Email already registered");
         require(!users[msg.sender].registered, "User already registered");
 
         SingleUserDetails memory details = SingleUserDetails({
@@ -51,6 +58,8 @@ contract UserRegistry {
             ci: _ci,
             addressDetails: _addressDetails,
             phoneNumber: _phoneNumber,
+            email: _email,
+            passwordHash: _passwordHash,
             verified: false
         });
 
@@ -61,6 +70,8 @@ contract UserRegistry {
             details: abi.encode(details)
         });
 
+        emailToAddress[_email] = msg.sender;
+
         emit UserRegistered(msg.sender, UserType.SingleUser);
     }
 
@@ -70,8 +81,11 @@ contract UserRegistry {
         string memory _personInChargeName,
         string memory _personInChargeCI,
         string memory _placePicsHash,
-        string memory _certificationDocHash
+        string memory _certificationDocHash,
+        string memory _email,
+        string memory _passwordHash
     ) public {
+        require(!users[emailToAddress[_email]].registered, "Email already registered");
         require(!users[msg.sender].registered, "User already registered");
 
         EntityDetails memory details = EntityDetails({
@@ -81,6 +95,8 @@ contract UserRegistry {
             personInChargeCI: _personInChargeCI,
             placePicsHash: _placePicsHash,
             certificationDocHash: _certificationDocHash,
+            email: _email,
+            passwordHash: _passwordHash,
             verified: false
         });
 
@@ -90,6 +106,8 @@ contract UserRegistry {
             registered: true,
             details: abi.encode(details)
         });
+
+        emailToAddress[_email] = msg.sender;
 
         emit UserRegistered(msg.sender, UserType.Entity);
     }
