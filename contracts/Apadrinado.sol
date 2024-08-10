@@ -38,13 +38,13 @@ contract HelPetApadrinar {
         userRegistry = UserRegistry(_userRegistryAddress);
     }
 
-    function addAnimal(string memory _name, string memory _description, uint _fundsNeeded, address payable _caretaker) public onlyOwner {
+    function addAnimal(string memory _name, string memory _description, uint _fundsNeeded, address payable _caretaker) public isEntity {
         animalCount++;
         animals[animalCount] = Animal(animalCount, _name, _description, _fundsNeeded, 0, _caretaker);
         emit AnimalAdded(animalCount, _name, _description, _fundsNeeded);
     }
 
-    function donate(uint _animalId) public payable isEntity {
+    function donate(uint _animalId) public payable {
         Animal storage animal = animals[_animalId];
         require(animal.id >= 0, "El animal no existe");
         require(animal.fundsRaised < animal.fundsNeeded, "Este animal ya ha recibido los fondos necesarios");
