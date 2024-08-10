@@ -8,7 +8,7 @@ contract Apadrinar {
     Register private register = Register(0xaE036c65C649172b43ef7156b009c6221B596B8b);
     HelpetToken private helPetToken = HelpetToken(0xcD6a42782d230D7c13A74ddec5dD140e55499Df9);
 
-    address payable constant DONATION_FEE_ADDRESS = payable (0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+    address payable constant DONATION_FEE_ADDRESS = payable(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
 
     struct Post {
         string description;
@@ -57,7 +57,7 @@ contract Apadrinar {
         emit PostCreated(postId, msg.sender, _amountNeeded);
     }
 
-    function donate(uint256 _postId) public payable onlyVerified  {
+    function donateToApadrinado(uint256 _postId) public payable onlyVerified {
         Post storage post = posts[_postId];
         require(!post.isClosed, "Post is closed");
         require(msg.value > 0, "Donation must be greater than 0");
@@ -85,6 +85,29 @@ contract Apadrinar {
         // Mint tokens for the donor
         helPetToken.mint(msg.sender, 1);
         emit DonationMade(_postId, msg.sender, msg.value, 1);
+    }
+
+    function donateToEntity(address _entityAddress) public payable onlyVerified {
+        (bool isRegistered, bool isVerified) = register.isEntityRegistered(_entityAddress);
+        require(isRegistered && isVerified, "Entity not registered or not verified");
+        require(msg.value > 0, "Donation must be greater than 0");
+
+        uint256 donationFee = (msg.value * 3) / 100;
+        uint256 amountToEntity = msg.value - donationFee;
+
+        require(amountToEntity > 0, "Donation amount too low");
+
+        // Transfer funds to entity
+        (bool sentToEntity, ) = _entityAddress.call{value: amountToEntity}("");
+        require(sentToEntity, "Failed to send Ether to entity");
+
+        // Transfer fee to donation fee address
+        (bool sentFee, ) = DONATION_FEE_ADDRESS.call{value: donationFee}("");
+        require(sentFee, "Failed to send Ether to donation fee address");
+
+        // Mint tokens for the donor
+        helPetToken.mint(msg.sender, 1);
+        emit DonationMade(0, msg.sender, msg.value, 1); // 0 postId for direct entity donation
     }
 
     function getPost(uint256 _postId) public view returns (
