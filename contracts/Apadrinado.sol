@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./UserRegistry.sol"; // Asegúrate de tener el contrato en el mismo directorio
 import "./Mytoken_HelPet.sol";
 
 contract HelPetApadrinar {
     address public owner;
-    UserRegistry userRegistry;
     HelpetToken public helpetToken; // Dirección del contrato del token HPT
     uint256 public donationTokenPercentage; // Porcentaje de tokens HPT por donación
 
@@ -30,21 +28,12 @@ contract HelPetApadrinar {
         _;
     }
 
-    // Modifier que permite solo a las entidades ejecutar la función
-    modifier isEntity() {
-        require(userRegistry.getUserType(msg.sender) == UserRegistry.UserType.Entity, "Solo entidades pueden ejecutar esta funcion");
-        _;
-    }
-
-    constructor(address _userRegistryAddress) {
     constructor(address _tokenAddress, uint256 _donationTokenPercentage) {
         owner = msg.sender;
-        userRegistry = UserRegistry(_userRegistryAddress);
         helpetToken = HelpetToken(_tokenAddress);
         donationTokenPercentage = _donationTokenPercentage;
     }
 
-    function addAnimal(string memory _name, string memory _description, uint _fundsNeeded, address payable _caretaker) public isEntity {
     function addAnimal(string memory _name, string memory _description, uint _fundsNeeded, address payable _caretaker) public onlyOwner {
         animalCount++;
         animals[animalCount] = Animal(animalCount, _name, _description, _fundsNeeded, 0, _caretaker);
@@ -53,9 +42,15 @@ contract HelPetApadrinar {
 
     function donate(uint _animalId) public payable {
         Animal storage animal = animals[_animalId];
+        require(animal.id > 0, "El animal no existe");
         require(animal.fundsRaised < animal.fundsNeeded, "Este animal ya ha recibido los fondos necesarios");
+        
         animal.fundsRaised += msg.value;
         animal.caretaker.transfer(msg.value);
+        
+        // Recompensa con tokens HPT basado en un porcentaje de la donación
+        uint256 tokenAmount = (msg.value * donationTokenPercentage) / 100;
+        helpetToken.mint(msg.sender, tokenAmount);
 
         emit DonationReceived(_animalId, msg.sender, msg.value);
     }
