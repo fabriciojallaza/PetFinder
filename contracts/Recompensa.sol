@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import "./Mytoken_HelPet.sol";
+import "./MyToken_HelPet.sol";
 
 contract LostDogReward {
     struct Claim {

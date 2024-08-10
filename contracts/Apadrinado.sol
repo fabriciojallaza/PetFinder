@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./Mytoken_HelPet.sol";
+import "./MyToken_HelPet.sol";
 
 contract HelPetApadrinar {
     address public owner;
