@@ -1,0 +1,307 @@
+{
+  "name": "Register",
+  "address": "0x181a6c2359a39628415ab91bd99306c2927dfab9",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "EntityRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "EntityVerified",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "grantPermission",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "grantedTo",
+          "type": "address"
+        }
+      ],
+      "name": "PermissionGranted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "PersonRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "PersonVerified",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_addressPhysical",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_responsiblePerson",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_phone",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_ciResponsible",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_photo",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_idCardPhoto",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_placePhoto",
+          "type": "string"
+        }
+      ],
+      "name": "registerEntity",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_age",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_addressPhysical",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_phone",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_ci",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_photo",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_idCardPhoto",
+          "type": "string"
+        }
+      ],
+      "name": "registerPerson",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "revokeEntityVerification",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "revokePermission",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "revokePersonVerification",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "verifyEntity",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "verifyPerson",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isEntityRegistered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_walletAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isPersonRegistered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "filePath": "PetFinder-1723346591493/contracts/Register.sol",
+  "pinnedAt": 1723359567381
+}

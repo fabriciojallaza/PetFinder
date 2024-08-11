@@ -1,0 +1,235 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "postId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "donor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "tokenAmount",
+						"type": "uint256"
+					}
+				],
+				"name": "DonationMade",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "postId",
+						"type": "uint256"
+					}
+				],
+				"name": "PostClosed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "postId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "poster",
+						"type": "address"
+					}
+				],
+				"name": "PostCreated",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_postId",
+						"type": "uint256"
+					}
+				],
+				"name": "closePost",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_vetLocation",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_sightingLocation",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_dogImage",
+						"type": "string"
+					}
+				],
+				"name": "createPost",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_postId",
+						"type": "uint256"
+					}
+				],
+				"name": "donate",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_postId",
+						"type": "uint256"
+					}
+				],
+				"name": "getPost",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "vetLocation",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "sightingLocation",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "poster",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "dogImage",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountRaised",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isClosed",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_postId",
+						"type": "uint256"
+					}
+				],
+				"name": "getTotalDonated",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Donar_flattened.sol": "Donar"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Donar_flattened.sol": {
+			"keccak256": "0x2cd41d55484a66a4e56e60929614c9366f18b9ac9bc06f1f209ad3b923780b57",
+			"urls": [
+				"bzz-raw://4462ba34adb4d361b854a111651d29f8356544c82fe17a6ab5fdd5494ba0955c",
+				"dweb:/ipfs/QmSMmnos5d6iq6Jf3efrxbb4Dx9UMe7ZeqRqy5vwt86Qg3"
+			]
+		}
+	},
+	"version": 1
+}

@@ -5,26 +5,26 @@ import "./Register.sol";
 import "./IHelpetToken.sol";
 
 contract LostDogReward {
-    Register private register = Register(0x7b96aF9Bd211cBf6BA5b0dd53aa61Dc5806b6AcE);
-    HelpetToken private helPetToken = HelpetToken(0x540d7E428D5207B30EE03F2551Cbb5751D3c7569);
+    HelpetToken private helPetToken = HelpetToken(0xE6e5aF029ed89Bf93D80Baea93BCBd9350dbFfb8);
+    Register private register = Register(0x181A6c2359A39628415aB91bD99306c2927DfAb9);
 
-    address payable constant DONATION_FEE_ADDRESS = payable(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+    address payable constant DONATION_FEE_ADDRESS = payable(0x3a15D6F3F4c0557fC51753cAc56d5D01B4a5c71A);
 
     struct Post {
         string dogImage;
         string dogName;
         string sightingLocation;
-        uint256 rewardAmount; // Amount in wei
+        uint256 rewardAmount; 
         address payable poster;
         bool isClosed;
-        bool isVerified; // To track if the dog has been verified
-        uint256 findReportId; // ID for the find report
+        bool isVerified; 
+        uint256 findReportId; 
     }
 
     struct FindReport {
         address finder;
         uint256 postId;
-        bool isVerified; // To track if the find report has been verified
+        bool isVerified;
     }
 
     constructor() {
@@ -43,8 +43,9 @@ contract LostDogReward {
     event PostClosed(uint256 indexed postId);
 
     modifier onlyVerified() {
-        (bool isRegistered, bool isVerified) = register.isPersonRegistered(msg.sender);
-        require(isRegistered && isVerified, "Not verified");
+        (bool isPersonRegistered, bool isPersonVerified) = register.isPersonRegistered(msg.sender);
+        (bool isEntityRegistered, bool isEntityVerified) = register.isEntityRegistered(msg.sender);
+        require((isPersonRegistered && isPersonVerified) || (isEntityRegistered && isEntityVerified), "Not verified");
         _;
     }
 
@@ -65,7 +66,7 @@ contract LostDogReward {
             poster: payable(msg.sender),
             isClosed: false,
             isVerified: false,
-            findReportId: 0 // Initialize findReportId to 0
+            findReportId: 0 
         });
 
         emit PostCreated(postId, msg.sender, msg.value);
@@ -108,16 +109,19 @@ contract LostDogReward {
             (bool sentFee, ) = DONATION_FEE_ADDRESS.call{value: donationFee}("");
             require(sentFee, "Failed to send Ether to donation fee address");
 
+            findReport.isVerified = true;
+            post.isVerified = true;
+            post.isClosed = true;
+
             helPetToken.mint(findReport.finder, 1);
 
             emit RewardDistributed(_findReportId, findReport.postId, findReport.finder, amountToFinder, donationFee);
         } else {
-            // Keep the post open if not verified
             post.isVerified = false;
             findReport.isVerified = false;
         }
 
-        emit PostClosed(findReport.postId); // Use post.postId here
+        emit PostClosed(findReport.postId); 
     }
 
     function closePost(uint256 _postId) public {

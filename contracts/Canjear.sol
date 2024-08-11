@@ -25,7 +25,7 @@ contract Canjear {
     }
 
     constructor() {
-        helPetToken = HelpetToken(0x540d7E428D5207B30EE03F2551Cbb5751D3c7569);
+        helPetToken = HelpetToken(0xE6e5aF029ed89Bf93D80Baea93BCBd9350dbFfb8);
         owner = msg.sender;
     }
 

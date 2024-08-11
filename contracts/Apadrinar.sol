@@ -5,23 +5,12 @@ import "./Register.sol";
 import "./IHelpetToken.sol";
 
 contract Apadrinar {
-    Register private register = Register(0x7b96aF9Bd211cBf6BA5b0dd53aa61Dc5806b6AcE);
-    HelpetToken private helPetToken = HelpetToken(0x540d7E428D5207B30EE03F2551Cbb5751D3c7569);
+    HelpetToken private helPetToken = HelpetToken(0xE6e5aF029ed89Bf93D80Baea93BCBd9350dbFfb8);
+    Register private register = Register(0x181A6c2359A39628415aB91bD99306c2927DfAb9);
 
-    address payable constant DONATION_FEE_ADDRESS = payable (0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+    address payable constant DONATION_FEE_ADDRESS = payable(0x3a15D6F3F4c0557fC51753cAc56d5D01B4a5c71A);
 
     struct Post {
-        string description;
-        string vetLocation;
-        uint256 amountNeeded;
-        string sightingLocation;
-        address payable poster;
-        string dogImage;
-        uint256 amountRaised;
-        bool isClosed;
-    }
-
-    struct PostDonar {
         string description;
         string vetLocation;
         uint256 amountNeeded;
@@ -44,8 +33,9 @@ contract Apadrinar {
     event PostClosed(uint256 indexed postId);
 
     modifier onlyVerified() {
-        (bool isRegistered, bool isVerified) = register.isPersonRegistered(msg.sender);
-        require(isRegistered && isVerified, "Not verified");
+        (bool isPersonRegistered, bool isPersonVerified) = register.isPersonRegistered(msg.sender);
+        (bool isEntityRegistered, bool isEntityVerified) = register.isEntityRegistered(msg.sender);
+        require((isPersonRegistered && isPersonVerified) || (isEntityRegistered && isEntityVerified), "Not verified");
         _;
     }
 
@@ -72,7 +62,7 @@ contract Apadrinar {
         emit PostCreated(postId, msg.sender, _amountNeeded);
     }
 
-    function donate(uint256 _postId) public payable onlyVerified  {
+    function donate(uint256 _postId) public payable onlyVerified {
         Post storage post = posts[_postId];
         require(!post.isClosed, "Post is closed");
         require(msg.value > 0, "Donation must be greater than 0");

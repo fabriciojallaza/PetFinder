@@ -1,0 +1,201 @@
+{
+  "name": "Apadrinar",
+  "address": "0xa4ca603a1beb03f1c11bdea90227855f67dff796",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_description",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_vetLocation",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amountNeeded",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_sightingLocation",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_dogImage",
+          "type": "string"
+        }
+      ],
+      "name": "createPost",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_postId",
+          "type": "uint256"
+        }
+      ],
+      "name": "donate",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "donor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tokenAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "DonationMade",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        }
+      ],
+      "name": "PostClosed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "poster",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountNeeded",
+          "type": "uint256"
+        }
+      ],
+      "name": "PostCreated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_postId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPost",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "vetLocation",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountNeeded",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "sightingLocation",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "poster",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "dogImage",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountRaised",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isClosed",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_postId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTotalDonated",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "filePath": "PetFinder-1723346591493/contracts/Apadrinar.sol",
+  "pinnedAt": 1723360530010
+}
