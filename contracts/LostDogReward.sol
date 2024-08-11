@@ -5,8 +5,8 @@ import "./Register.sol";
 import "./IHelpetToken.sol";
 
 contract LostDogReward {
-    Register private register = Register(0xaE036c65C649172b43ef7156b009c6221B596B8b);
-    HelpetToken private helPetToken = HelpetToken(0xcD6a42782d230D7c13A74ddec5dD140e55499Df9);
+    Register private register = Register(0x7b96aF9Bd211cBf6BA5b0dd53aa61Dc5806b6AcE);
+    HelpetToken private helPetToken = HelpetToken(0x540d7E428D5207B30EE03F2551Cbb5751D3c7569);
 
     address payable constant DONATION_FEE_ADDRESS = payable(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
 
@@ -25,6 +25,10 @@ contract LostDogReward {
         address finder;
         uint256 postId;
         bool isVerified; // To track if the find report has been verified
+    }
+
+    constructor() {
+        helPetToken.setRewardContract(address(this));
     }
 
     uint256 private nextPostId = 0;

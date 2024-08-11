@@ -24,7 +24,6 @@ contract Register {
         string photo;
         string idCardPhoto;
         string placePhoto;
-        address walletAddress;
         bool isVerified;
     }
 
@@ -83,10 +82,9 @@ contract Register {
         string memory _ciResponsible,
         string memory _photo,
         string memory _idCardPhoto,
-        string memory _placePhoto,
-        address _walletAddress
+        string memory _placePhoto
     ) public {
-        entities[_walletAddress] = Entity({
+        entities[msg.sender] = Entity({
             name: _name,
             addressPhysical: _addressPhysical,
             responsiblePerson: _responsiblePerson,
@@ -95,11 +93,10 @@ contract Register {
             photo: _photo,
             idCardPhoto: _idCardPhoto,
             placePhoto: _placePhoto,
-            walletAddress: _walletAddress,
             isVerified: false
         });
 
-        emit EntityRegistered(_walletAddress, _name);
+        emit EntityRegistered(msg.sender, _name);
     }
 
     function isPersonRegistered(address _walletAddress) public view returns (bool, bool) {

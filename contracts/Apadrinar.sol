@@ -5,15 +5,15 @@ import "./Register.sol";
 import "./IHelpetToken.sol";
 
 contract Apadrinar {
-    Register private register = Register(0xaE036c65C649172b43ef7156b009c6221B596B8b);
-    HelpetToken private helPetToken = HelpetToken(0xcD6a42782d230D7c13A74ddec5dD140e55499Df9);
+    Register private register = Register(0x7b96aF9Bd211cBf6BA5b0dd53aa61Dc5806b6AcE);
+    HelpetToken private helPetToken = HelpetToken(0x540d7E428D5207B30EE03F2551Cbb5751D3c7569);
 
-    address payable constant DONATION_FEE_ADDRESS = payable(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+    address payable constant DONATION_FEE_ADDRESS = payable (0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
 
     struct Post {
         string description;
         string vetLocation;
-        uint256 amountNeeded; // Amount in wei
+        uint256 amountNeeded;
         string sightingLocation;
         address payable poster;
         string dogImage;
@@ -37,7 +37,7 @@ contract Apadrinar {
     function createPost(
         string memory _description,
         string memory _vetLocation,
-        uint256 _amountNeeded, // Amount in wei
+        uint256 _amountNeeded,
         string memory _sightingLocation,
         string memory _dogImage
     ) public onlyVerified {
@@ -57,7 +57,7 @@ contract Apadrinar {
         emit PostCreated(postId, msg.sender, _amountNeeded);
     }
 
-    function donateToApadrinado(uint256 _postId) public payable onlyVerified {
+    function donate(uint256 _postId) public payable onlyVerified  {
         Post storage post = posts[_postId];
         require(!post.isClosed, "Post is closed");
         require(msg.value > 0, "Donation must be greater than 0");
@@ -74,40 +74,14 @@ contract Apadrinar {
             emit PostClosed(_postId);
         }
 
-        // Transfer funds to poster
         (bool sentToPoster, ) = post.poster.call{value: amountToPoster}("");
         require(sentToPoster, "Failed to send Ether to poster");
 
-        // Transfer fee to donation fee address
         (bool sentFee, ) = DONATION_FEE_ADDRESS.call{value: donationFee}("");
         require(sentFee, "Failed to send Ether to donation fee address");
 
-        // Mint tokens for the donor
         helPetToken.mint(msg.sender, 1);
         emit DonationMade(_postId, msg.sender, msg.value, 1);
-    }
-
-    function donateToEntity(address _entityAddress) public payable onlyVerified {
-        (bool isRegistered, bool isVerified) = register.isEntityRegistered(_entityAddress);
-        require(isRegistered && isVerified, "Entity not registered or not verified");
-        require(msg.value > 0, "Donation must be greater than 0");
-
-        uint256 donationFee = (msg.value * 3) / 100;
-        uint256 amountToEntity = msg.value - donationFee;
-
-        require(amountToEntity > 0, "Donation amount too low");
-
-        // Transfer funds to entity
-        (bool sentToEntity, ) = _entityAddress.call{value: amountToEntity}("");
-        require(sentToEntity, "Failed to send Ether to entity");
-
-        // Transfer fee to donation fee address
-        (bool sentFee, ) = DONATION_FEE_ADDRESS.call{value: donationFee}("");
-        require(sentFee, "Failed to send Ether to donation fee address");
-
-        // Mint tokens for the donor
-        helPetToken.mint(msg.sender, 1);
-        emit DonationMade(0, msg.sender, msg.value, 1); // 0 postId for direct entity donation
     }
 
     function getPost(uint256 _postId) public view returns (
