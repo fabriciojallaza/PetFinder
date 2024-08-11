@@ -14,7 +14,7 @@ contract HelpetToken is ERC20, Ownable {
     }
 
     function mint(address to, uint256 amount) external {
-        require(msg.sender == rewardContract, "Not authorized");
+        require(msg.sender == rewardContract || msg.sender == owner(), "Not authorized");
         _mint(to, amount);
     }
 

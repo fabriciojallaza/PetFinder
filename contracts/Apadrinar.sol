@@ -21,6 +21,21 @@ contract Apadrinar {
         bool isClosed;
     }
 
+    struct PostDonar {
+        string description;
+        string vetLocation;
+        uint256 amountNeeded;
+        string sightingLocation;
+        address payable poster;
+        string dogImage;
+        uint256 amountRaised;
+        bool isClosed;
+    }
+
+    constructor() {
+        helPetToken.setRewardContract(address(this));
+    }
+
     uint256 private nextPostId = 0;
     mapping(uint256 => Post) private posts;
 

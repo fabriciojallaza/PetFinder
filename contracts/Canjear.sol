@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./IHelpetToken.sol";
 
-contract RedeemSystem {
+contract Canjear {
     HelpetToken private helPetToken;
     address private owner;
 
@@ -25,7 +25,7 @@ contract RedeemSystem {
     }
 
     constructor() {
-        helPetToken = HelpetToken(0x7C4e30a43ecC4d3231b5B07ed082329020D141F3);
+        helPetToken = HelpetToken(0x540d7E428D5207B30EE03F2551Cbb5751D3c7569);
         owner = msg.sender;
     }
 
